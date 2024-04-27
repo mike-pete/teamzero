@@ -19,3 +19,26 @@ model Post {
 
     @@index([name])
 }
+
+
+model BusStops {
+    id        Int      @id @default(autoincrement())
+    stopId    String   @unique
+    code    String
+    name      String
+    description String
+    latitude      Float
+    longitude      Float
+
+    @@index([latitude, longitude])
+}
+
+model Addresses {
+    id        Int      @id @default(autoincrement())
+    addressId    String   @unique
+    address    String
+    latitude      Float
+    longitude      Float
+
+    @@index([address, latitude, longitude])
+}
