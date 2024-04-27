@@ -9,6 +9,7 @@ export const env = createEnv({
   server: {
     TURSO_AUTH_TOKEN: z.string(),
     TURSO_DATABASE_URL: z.string(),
+    AZURE_ATLAS_TOKEN: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -30,6 +31,7 @@ export const env = createEnv({
   runtimeEnv: {
     TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
     TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
+    AZURE_ATLAS_TOKEN: process.env.AZURE_ATLAS_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
