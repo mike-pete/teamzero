@@ -39,10 +39,12 @@ export const searchRoute = createTRPCRouter({
         params.append("subscription-key", AZURE_ATLAS_TOKEN);
         params.append("api-version", "2023-06-01");
         params.append("query", input.address);
-        const request = new Request('https://atlas.microsoft.com/geocode?' + params.toString())
-        const response = await fetch(request)
-        const result = await response.json() as GeocodeResult;
-        const geometry = result.features[0]?.geometry
+        const request = new Request(
+          "https://atlas.microsoft.com/geocode?" + params.toString(),
+        );
+        const response = await fetch(request);
+        const result = (await response.json()) as GeocodeResult;
+        const geometry = result.features[0]?.geometry;
 
         const curLng = geometry?.coordinates[0] ?? 0;
         const curLat = geometry?.coordinates[1] ?? 0;
@@ -50,16 +52,23 @@ export const searchRoute = createTRPCRouter({
         // get bus stops
         const busStops = await db.busStops.findMany();
         // find id of closest bus stop
-        const closest = busStops.reduce((acc, cur) => {
-          const curDistance = Math.sqrt(Math.pow(curLng - cur.longitude, 2) + Math.pow(curLat - cur.latitude, 2))
-          if (acc.distance > curDistance)
-            return { ...cur, distance: curDistance }
-          return acc
+        const closest = busStops.reduce(
+          (acc, cur) => {
+            const curDistance = Math.sqrt(
+              Math.pow(curLng - cur.longitude, 2) +
+                Math.pow(curLat - cur.latitude, 2),
+            );
+            if (acc.distance > curDistance)
+              return { ...cur, distance: curDistance };
+            return acc;
+          },
+          { id: 0, distance: Number.MAX_VALUE },
+        );
 
-        }, { id: 0, distance: Number.MAX_VALUE })
-
-        return [{longitude:curLng, latitude:curLat}, closest.distance < 0.03 ? closest : null]
-
+        return [
+          { longitude: curLng, latitude: curLat },
+          closest.distance < 0.03 ? closest : null,
+        ];
       }
     }),
   getAddress: publicProcedure
@@ -68,24 +77,40 @@ export const searchRoute = createTRPCRouter({
       // check db for address, null if not found
       return await getAddress(input.address, ctx.db);
     }),
-  getAddresses: publicProcedure
-  .query(async ()=>await db.addresses.findMany()),
+  getAddresses: publicProcedure.query(async () => {
+    const addresses = await db.addresses.findMany({
+      select: {
+        address: true,
+        latitude: true,
+        longitude: true,
+        id: true,
+        busStop: { select: { stopId: true } },
+      },
+    });
+
+    return addresses.map((address) => ({
+      ...address,
+      busStop: address.busStop.stopId,
+    }));
+  }),
   saveAddress: publicProcedure
-    .input(z.object({
-      address: z.string(),
-      busStopId: z.number(),
-      latitude: z.number(),
-      longitude: z.number(),
-    }))
+    .input(
+      z.object({
+        address: z.string(),
+        busStopId: z.number(),
+        latitude: z.number(),
+        longitude: z.number(),
+      }),
+    )
     .mutation(({ input }) => {
       const addressResult = db.addresses.create({
         data: {
           address: input.address,
           longitude: input.longitude,
           latitude: input.latitude,
-          busStopId: input.busStopId
-        }
-      })
-      return addressResult
-    })
+          busStopId: input.busStopId,
+        },
+      });
+      return addressResult;
+    }),
 });
