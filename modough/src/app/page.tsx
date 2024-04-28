@@ -99,7 +99,13 @@ export default function Home() {
           }}
           mapMinHeight="60vh"
           onGoogleApiLoaded={onGoogleApiLoaded}
-          onChange={(map) => console.log("Map moved", map)}
+          events={[
+            {
+              name:'onClick',
+              handler: (e:MouseEvent)=>{e.preventDefault()}
+            }
+          ]}
+          // onChange={(map) => console.log("Map moved", map)}
 
         >
           {[{ lat: 31.9619072, lng: -106.3682048, name: "ok" }].map(
@@ -116,6 +122,8 @@ export default function Home() {
               </Marker>
             ),
           )}
+          {// stops foreach if in highlight ids or separately save the markers to display
+          }
           {houses?.map(h => (
           <Marker
           key={"h" + h.id}
@@ -124,6 +132,7 @@ export default function Home() {
           markerId={"h" + h.id}
           highlight={highlightIds.includes("h"+h.id)}
           onClick={(e,{markerId})=>{
+            e.preventDefault()
             // get busStop Id
             const targetBusStopId = houses.find(h=>h.id===+markerId.substring(1))?.busStopId
             if(!!targetBusStopId){

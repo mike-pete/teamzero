@@ -5,7 +5,7 @@ interface MarkerProps {
   lat: number;
   lng: number;
   markerId: string;
-  highlight: boolean;
+  highlight?: boolean;
   children?: React.ReactElement | null;
   onClick?: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
