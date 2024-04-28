@@ -4,7 +4,6 @@ import type { PrismaClient } from "@prisma/client";
 import { env } from "~/env";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
-import type { Addresses } from "@prisma/client";
 
 const AZURE_ATLAS_TOKEN = env.AZURE_ATLAS_TOKEN;
 

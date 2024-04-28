@@ -8,8 +8,7 @@ import Marker from "./marker";
 
 export default function Home() {
   const search = api.search.search.useMutation();
-  const houses = api.search.getAddresses.useQuery();
-  console.log(houses);
+  const houses= api.search.getAddresses.useQuery().data;
 
   const [address, setAddress] = useState("");
 
@@ -109,7 +108,18 @@ export default function Home() {
               />
             ),
           )}
+          {houses?.map(h=>(<Marker key={"h"+h.id} lat={h.latitude} lng={h.longitude} markerId={"h"+h.id} />))}
         </GoogleMap>
+      </section>
+      <section>
+        <div className="grid grid-cols-3 gap-4">
+          <div>ID</div>
+          <div>Address</div>
+          <div>Nearest Stop</div>
+          {houses?.map(h=>(<><div>{h.id}</div><div key={h.id}>{h.address}</div><div>{h.busStopId}</div></>))}
+
+        </div>
+
       </section>
     </div>
   );
