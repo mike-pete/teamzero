@@ -25,8 +25,7 @@ model BusStops {
 
 model Addresses {
     id        Int      @id @default(autoincrement())
-    addressId    String   @unique
-    address    String
+    address    String   @unique
     latitude      Float
     longitude      Float
 
