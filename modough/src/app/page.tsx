@@ -151,25 +151,49 @@ export default function Home() {
                 lat={latitude}
                 lng={longitude}
                 markerId={stopId}
-              >
-                <IconBusStop size={30} />
-              </Marker>
-            ))}
-            {housesData?.map((house) => (
-              <Marker
-                key={"h" + house.id}
-                lat={house.latitude}
-                lng={house.longitude}
-                markerId={"h" + house.id}
-                onClick={(e, { markerId }) => {
-                  setSelectedHouse(house.id);
-                  setSelectedStop(house.busStop);
+                className={
+                  selectedStop === stopId
+                    ? "text-emerald-700 outline outline-4 outline-emerald-500"
+                    : ""
+                }
+                onClick={() => {
+                  setSelectedHouse(undefined);
+                  setSelectedStop(stopId);
+                  mapRef.current?.setZoom(17);
+                  mapRef.current?.panTo({ lat: latitude, lng: longitude });
                 }}
-                className={selectedHouse === house.id ? "bg-sky-400" : ""}
               >
-                <IconHome size={30} />
+                <IconBusStop size={30} stroke={1.5} />
               </Marker>
             ))}
+            {housesData?.map((house) => {
+              let className = "";
+              if (selectedHouse === house.id) {
+                className = "outline-4 text-sky-700 outline outline-sky-500";
+              } else if (selectedStop === house.busStop) {
+                className = "outline-4 text-sky-500 outline outline-sky-300";
+              }
+              return (
+                <Marker
+                  key={"h" + house.id}
+                  lat={house.latitude}
+                  lng={house.longitude}
+                  markerId={"h" + house.id}
+                  onClick={() => {
+                    setSelectedHouse(house.id);
+                    setSelectedStop(house.busStop);
+                    mapRef.current?.setZoom(17);
+                    mapRef.current?.panTo({
+                      lat: house.latitude,
+                      lng: house.longitude,
+                    });
+                  }}
+                  className={className}
+                >
+                  <IconHome size={30} />
+                </Marker>
+              );
+            })}
           </GoogleMap>
         </div>
       </section>
