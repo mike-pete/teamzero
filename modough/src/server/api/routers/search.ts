@@ -4,12 +4,6 @@ import type { PrismaClient } from "@prisma/client/extension";
 import { env } from "~/env";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
-<<<<<<< HEAD
-=======
-import { env } from '~/env'
-import type { PrismaClient } from "@prisma/client/extension";
-import { Goblin_One } from "next/font/google";
->>>>>>> get-stop-near-address
 
 const AZURE_ATLAS_TOKEN = env.AZURE_ATLAS_TOKEN;
 
