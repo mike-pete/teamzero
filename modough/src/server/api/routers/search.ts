@@ -4,6 +4,12 @@ import type { PrismaClient } from "@prisma/client/extension";
 import { env } from "~/env";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
+<<<<<<< HEAD
+=======
+import { env } from '~/env'
+import type { PrismaClient } from "@prisma/client/extension";
+import { Goblin_One } from "next/font/google";
+>>>>>>> get-stop-near-address
 
 const AZURE_ATLAS_TOKEN = env.AZURE_ATLAS_TOKEN;
 
@@ -39,22 +45,34 @@ export const searchRoute = createTRPCRouter({
         params.append("subscription-key", AZURE_ATLAS_TOKEN);
         params.append("api-version", "2023-06-01");
         params.append("query", input.address);
-        const request = new Request(
-          "https://atlas.microsoft.com/geocode?" + params.toString(),
-        );
-        const response = await fetch(request);
-        const result = (await response.json()) as GeocodeResult;
-        const geometry = result.features[0]?.geometry;
-        if (geometry?.coordinates[0] && geometry.coordinates[1]) {
-          const address = db.addresses.create({
-            data: {
-              address: input.address,
-              longitude: geometry.coordinates[0],
-              latitude: geometry.coordinates[1],
-            },
-          });
-          return address;
-        }
+        const request = new Request('https://atlas.microsoft.com/geocode?' + params.toString())
+        const response = await fetch(request)
+        const result = await response.json() as GeocodeResult;
+        const geometry = result.features[0]?.geometry
+
+        const curLng = geometry?.coordinates[0] ?? 0;
+        const curLat = geometry?.coordinates[1] ?? 0;
+
+        // get bus stops
+        const busStops = await db.busStops.findMany();
+        // find id of closest bus stop
+        const closest = busStops.reduce((acc, cur) => {
+          const curDistance = Math.sqrt(Math.pow(curLng - cur.longitude, 2) + Math.pow(curLat - cur.latitude, 2))
+          if (acc.distance > curDistance)
+            return { ...cur, distance: curDistance }
+          return acc
+
+        }, { id: 0, distance: Number.MAX_VALUE })
+
+        return closest
+
+        //   addressResult = db.addresses.create({data:{
+        //     address: input.address,
+        //     longitude:  geometry.coordinates[0],
+        //     latitude:  geometry.coordinates[1],
+        //     busStopId: 
+        //   }})
+        // }
       }
     }),
   getAddress: publicProcedure
