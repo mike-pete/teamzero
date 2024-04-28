@@ -104,8 +104,8 @@ export default function Home() {
                 <p className="w-full">No stops found</p>
               ) : (
                 <p className="w-full">
-                  {search.data.nearestStop.id} -{" "}
-                  {search.data.nearestStop.stopId}
+                  {search.data.nearestStop.stopId} -{" "}
+                  {stopsData?.find(stop => stop.id === search.data.nearestStop?.id)?.name}
                 </p>
               )}
               <button className="inline-block rounded-lg bg-sky-400 px-2 py-0.5 text-sm font-semibold text-white" onClick={()=>{
