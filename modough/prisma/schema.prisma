@@ -19,14 +19,16 @@ model BusStops {
     description String
     latitude      Float
     longitude      Float
+    address    Addresses[]
 
     @@index([latitude, longitude])
 }
 
 model Addresses {
     id        Int      @id @default(autoincrement())
-    addressId    String   @unique
-    address    String
+    address    String @unique
+    busStop    BusStops @relation(fields: [busStopId], references: [id])
+    busStopId  Int
     latitude      Float
     longitude      Float
 
