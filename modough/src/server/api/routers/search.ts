@@ -69,6 +69,8 @@ export const searchRoute = createTRPCRouter({
       // check db for address, null if not found
       return await getAddress(input.address, ctx.db);
     }),
+  getAddresses: publicProcedure
+  .query(async ()=>await db.addresses.findMany()),
   saveAddress: publicProcedure
     .input(z.object({
       address: z.string(),

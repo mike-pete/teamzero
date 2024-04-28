@@ -8,6 +8,8 @@ import Marker from "./marker";
 
 export default function Home() {
   const search = api.search.search.useMutation();
+  const houses = api.search.getAddresses.useQuery();
+  console.log(houses);
 
   const [address, setAddress] = useState("");
 
