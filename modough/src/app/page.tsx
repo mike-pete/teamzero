@@ -1,7 +1,10 @@
 "use client";
 import { IconSearch } from "@tabler/icons-react";
-import { useState } from "react";
+import GoogleMap from "google-maps-react-markers";
+import { useRef, useState } from "react";
+import { env } from "~/env";
 import { api } from "~/trpc/react";
+import Marker from "./marker";
 
 export default function Home() {
   const search = api.search.search.useMutation();
@@ -18,6 +21,22 @@ export default function Home() {
   if (search.data) {
     console.log("search data", search.data);
   }
+
+  const mapRef = useRef(null);
+  const [mapReady, setMapReady] = useState(false);
+
+  const onGoogleApiLoaded = ({ map, maps }) => {
+    mapRef.current = map;
+    setMapReady(true);
+  };
+
+  const onMarkerClick = (e, { markerId, lat, lng }) => {
+    console.log("This is ->", markerId);
+
+    // inside the map instance you can call any google maps method
+    mapRef.current.setCenter({ lat, lng });
+    // ref. https://developers.google.com/maps/documentation/javascript/reference?hl=it
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center gap-4 bg-zinc-50 p-8">
@@ -60,6 +79,35 @@ export default function Home() {
             </div>
           </div>
         )} */}
+      </section>
+      <section className="min-w-[600px] h-[calc(60vh-30px)] overflow-hidden rounded-xl">
+        <GoogleMap
+          apiKey={env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+          defaultCenter={{ lat: 31.9619072, lng: -106.3682048 }}
+          defaultZoom={5}
+          options={{
+            disableDefaultUI: true,
+            mapId: "ca09a10cff5bcbc4",
+            minZoom: 8,
+            zoom: 10,
+          }}
+          mapMinHeight="60vh"
+          onGoogleApiLoaded={onGoogleApiLoaded}
+          onChange={(map) => console.log("Map moved", map)}
+
+        >
+          {[{ lat: 31.9619072, lng: -106.3682048, name: "ok" }].map(
+            ({ lat, lng, name }, index) => (
+              <Marker
+                key={index}
+                lat={lat}
+                lng={lng}
+                markerId={name}
+                onClick={onMarkerClick}
+              />
+            ),
+          )}
+        </GoogleMap>
       </section>
     </div>
   );

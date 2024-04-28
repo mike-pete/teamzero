@@ -21,6 +21,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string(),
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
   },
 
@@ -32,6 +33,8 @@ export const env = createEnv({
     TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
     TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
     AZURE_ATLAS_TOKEN: process.env.AZURE_ATLAS_TOKEN,
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:
+      process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
