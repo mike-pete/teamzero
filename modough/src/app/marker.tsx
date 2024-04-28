@@ -5,16 +5,19 @@ interface MarkerProps {
   lat: number;
   lng: number;
   markerId: string;
+  children?: React.ReactElement | null;
   onClick?: (
-    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     props: { lat: number; lng: number; markerId: string },
   ) => void;
 }
 
-const Marker = ({ lat, lng, markerId, onClick }: MarkerProps) =>
+const Marker = ({ lat, lng, markerId, onClick, children }: MarkerProps) =>
   lat && lng ? (
-    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white p-1 shadow-md">
-      <IconBusStop className="" size={30} />
+    <div 
+      className="flex h-10 w-10 items-center justify-center rounded-full bg-white p-1 shadow-md"
+      onClick={(e)=>(onClick ? onClick(e, {markerId, lat, lng}): null)}>
+      {children}
     </div>
   ) : null;
 

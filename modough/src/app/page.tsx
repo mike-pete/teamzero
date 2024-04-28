@@ -1,5 +1,5 @@
 "use client";
-import { IconSearch } from "@tabler/icons-react";
+import { IconBusStop, IconSearch, IconHome } from "@tabler/icons-react";
 import GoogleMap from "google-maps-react-markers";
 import { useRef, useState } from "react";
 import { env } from "~/env";
@@ -8,7 +8,10 @@ import Marker from "./marker";
 
 export default function Home() {
   const search = api.search.search.useMutation();
-  const houses= api.search.getAddresses.useQuery().data;
+  const houses = api.search.getAddresses.useQuery().data;
+  const stops = api.search.getStops.useQuery().data;
+
+  const saveAddress = api.search.saveAddress.useMutation();
 
   const [address, setAddress] = useState("");
 
@@ -105,10 +108,12 @@ export default function Home() {
                 lng={lng}
                 markerId={name}
                 onClick={onMarkerClick}
-              />
+              >
+                <IconBusStop size={30} />
+              </Marker>
             ),
           )}
-          {houses?.map(h=>(<Marker key={"h"+h.id} lat={h.latitude} lng={h.longitude} markerId={"h"+h.id} />))}
+          {houses?.map(h => (<Marker key={"h" + h.id} lat={h.latitude} lng={h.longitude} markerId={"h" + h.id} ><IconHome size={30} /></Marker>))}
         </GoogleMap>
       </section>
       <section>
@@ -116,7 +121,7 @@ export default function Home() {
           <div>ID</div>
           <div>Address</div>
           <div>Nearest Stop</div>
-          {houses?.map(h=>(<><div>{h.id}</div><div key={h.id}>{h.address}</div><div>{h.busStopId}</div></>))}
+          {houses?.map(h => (<><div>{h.id}</div><div key={h.id}>{h.address}</div><div>{stops?.find((s)=>s.id===h.busStopId)?.description}</div></>))}
 
         </div>
 
