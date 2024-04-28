@@ -1,14 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Post` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-PRAGMA foreign_keys=off;
-DROP TABLE "Post";
-PRAGMA foreign_keys=on;
-
 -- CreateTable
 CREATE TABLE "BusStops" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -23,8 +12,8 @@ CREATE TABLE "BusStops" (
 -- CreateTable
 CREATE TABLE "Addresses" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "addressId" TEXT NOT NULL,
     "address" TEXT NOT NULL,
+    "busStopId" TEXT NOT NULL,
     "latitude" REAL NOT NULL,
     "longitude" REAL NOT NULL
 );
@@ -36,7 +25,7 @@ CREATE UNIQUE INDEX "BusStops_stopId_key" ON "BusStops"("stopId");
 CREATE INDEX "BusStops_latitude_longitude_idx" ON "BusStops"("latitude", "longitude");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Addresses_addressId_key" ON "Addresses"("addressId");
+CREATE UNIQUE INDEX "Addresses_address_key" ON "Addresses"("address");
 
 -- CreateIndex
 CREATE INDEX "Addresses_address_latitude_longitude_idx" ON "Addresses"("address", "latitude", "longitude");
