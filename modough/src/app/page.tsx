@@ -5,15 +5,17 @@ import { useRef, useState } from "react";
 import { env } from "~/env";
 import { api } from "~/trpc/react";
 import Marker from "./marker";
+import type { Addresses } from "@prisma/client";
 
 export default function Home() {
   const search = api.search.search.useMutation();
-  const houses = api.search.getAddresses.useQuery().data;
-  const stops = api.search.getStops.useQuery().data;
+  const houses = api.search.getAddresses.useQuery().data!;
+  const stops = api.search.getStops.useQuery().data!;
 
   const saveAddress = api.search.saveAddress.useMutation();
 
   const [address, setAddress] = useState("");
+  const [highlightIds, setHighlightIds] = useState<string[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,13 +109,31 @@ export default function Home() {
                 lat={lat}
                 lng={lng}
                 markerId={name}
+                // highlight={highlightIds.includes(m.id)}
                 onClick={onMarkerClick}
               >
                 <IconBusStop size={30} />
               </Marker>
             ),
           )}
-          {houses?.map(h => (<Marker key={"h" + h.id} lat={h.latitude} lng={h.longitude} markerId={"h" + h.id} ><IconHome size={30} /></Marker>))}
+          {houses?.map(h => (
+          <Marker
+          key={"h" + h.id}
+          lat={h.latitude}
+          lng={h.longitude}
+          markerId={"h" + h.id}
+          highlight={highlightIds.includes("h"+h.id)}
+          onClick={(e,{markerId})=>{
+            // get busStop Id
+            const targetBusStopId = houses.find(h=>h.id===+markerId.substring(1))?.busStopId
+            if(!!targetBusStopId){
+              // find houses with busStop Id
+              const targetHouseIds = houses.filter(h=>h.busStopId===targetBusStopId)?.map((h)=>!!h && "h"+h.id)
+              setHighlightIds([''+targetBusStopId, ...targetHouseIds])
+            }
+          }} >
+            <IconHome size={30} />
+          </Marker>))}
         </GoogleMap>
       </section>
       <section>
