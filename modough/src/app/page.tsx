@@ -43,7 +43,7 @@ export default function Home() {
             </button>
           </form>
         </div>
-        {search.data && (
+        {/* {search.data && (
           <div className="py-8">
             <div className="flex min-w-52 flex-col items-end gap-1 rounded-lg border-2 bg-white p-2">
               <p className="w-full text-sm font-semibold text-zinc-400">
@@ -59,7 +59,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-        )}
+        )} */}
       </section>
     </div>
   );
