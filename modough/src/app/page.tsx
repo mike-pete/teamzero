@@ -1,10 +1,11 @@
 "use client";
 import { IconBusStop, IconSearch, IconHome } from "@tabler/icons-react";
 import GoogleMap from "google-maps-react-markers";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { env } from "~/env";
 import { api } from "~/trpc/react";
 import Marker from "./marker";
+import getBusLocations from "./_components/livemarkers";
 import type { Addresses } from "@prisma/client";
 
 export default function Home() {
@@ -43,6 +44,16 @@ export default function Home() {
     mapRef.current.setCenter({ lat, lng });
     // ref. https://developers.google.com/maps/documentation/javascript/reference?hl=it
   };
+
+  useEffect(()=>{
+
+    const intervalId = setInterval(()=>{
+      const buslocs = getBusLocations();
+      console.log(buslocs)
+    }, 10*1000)
+    return ()=>clearInterval(intervalId)
+
+  })
 
   return (
     <div className="flex min-h-screen flex-col items-center gap-4 bg-zinc-50 p-8">

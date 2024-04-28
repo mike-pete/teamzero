@@ -11,40 +11,44 @@ const lineReqBody = lineIds.flatMap(id => [{
     "callingApp": "RMD"
 }])
 
-const busLocations = await fetch('https://go.sunmetro.net/RealTimeManager', {
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        "version": "1.1",
-        "method": "GetTravelPoints",
-        "params": {
-            "interval": 10,
-            "travelPointsReqs": lineReqBody
-        }
-    }),
-    method: 'POST'
-}).then((res) => res.json()).then((locs ) => locs?.result?.travelPoints).then(tp => {
-    const busArray= []
-    tp.forEach(t => {
-        const exists = busArray.findIndex(x => x.LineDirId === t.LineDirId)
-        const points = t.EstimatedPoints || t.ScheduledPoints
-        const latest = points.reduce((acc, ep) => {
-            if (ep.Time > acc.Time) {
-                return ep;
+const getBusLocations = async () => {
+    const busLocations = await fetch('https://go.sunmetro.net/RealTimeManager', {
+        headers: {
+            "accept":"application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "version": "1.1",
+            "method": "GetTravelPoints",
+            "params": {
+                "interval": 10,
+                "travelPointsReqs": lineReqBody
             }
-            return acc;
-        }, { Time: 0, Lat: 0, Lon: 0 })
-        if (exists===-1) {
-            busArray.push({ LineDirId: t.LineDirId, ...latest })
-        }
-        else {
-            if(latest.Time > busArray[exists].Time){
-                busArray[exists] = latest
+        }),
+        method: 'POST'
+    }).then((res) => res.json()).then((locs) => locs?.result?.travelPoints).then(tp => {
+        const busArray = []
+        tp.forEach(t => {
+            const exists = busArray.findIndex(x => x.LineDirId === t.LineDirId)
+            const points = t.EstimatedPoints || t.ScheduledPoints
+            const latest = points.reduce((acc, ep) => {
+                if (ep.Time > acc.Time) {
+                    return ep;
+                }
+                return acc;
+            }, { Time: 0, Lat: 0, Lon: 0 })
+            if (exists === -1) {
+                busArray.push({ LineDirId: t.LineDirId, ...latest })
             }
-        }
+            else {
+                if (latest.Time > busArray[exists].Time) {
+                    busArray[exists] = latest
+                }
+            }
+        })
+        return busArray;
     })
-    return busArray;
-})
+    return busLocations
+}
 
-export default busLocations;
+export default getBusLocations;
