@@ -90,7 +90,7 @@ export default function Home() {
             </button>
           </form>
         </div>
-        {/* {search.data && (
+        {search.data && (
           <div className="py-8">
             <div className="flex min-w-52 flex-col items-end gap-1 rounded-lg border-2 bg-white p-2">
               <p className="w-full text-sm font-semibold text-zinc-400">
@@ -100,13 +100,29 @@ export default function Home() {
               <p className="w-full text-sm font-semibold text-zinc-400">
                 nearest stop:
               </p>
-              <p className="w-full">{search.data.nearestStop.name}</p>
-              <button className="inline-block rounded-lg bg-sky-400 px-2 py-0.5 text-sm font-semibold text-white">
+              {search.data.nearestStop === null ? (
+                <p className="w-full">No stops found</p>
+              ) : (
+                <p className="w-full">
+                  {search.data.nearestStop.id} -{" "}
+                  {search.data.nearestStop.stopId}
+                </p>
+              )}
+              <button className="inline-block rounded-lg bg-sky-400 px-2 py-0.5 text-sm font-semibold text-white" onClick={()=>{
+                if(search.data.nearestStop){
+                  saveAddress.mutate({
+                    address: search.data.address,
+                    busStopId: search.data.nearestStop.id,
+                    latitude: search.data.coordinates.latitude,
+                    longitude: search.data.coordinates.longitude,
+                  });
+                }
+              }}>
                 Save
               </button>
             </div>
           </div>
-        )} */}
+        )}
       </section>
       <section className="w-full">
         <div className="flex p-2">
@@ -198,17 +214,17 @@ export default function Home() {
         </div>
       </section>
       <section>
-        <div className="grid grid-cols-3 gap-4">
-          <div>ID</div>
+        <div className="grid grid-cols-2 gap-4">
+          {/* <div>ID</div> */}
           <div>Address</div>
           <div>Nearest Stop</div>
           {housesData?.map((house) => (
             <Fragment key={house.id}>
-              <div>{house.id}</div>
+              {/* <div>{house.id}</div> */}
               <div key={house.id}>{house.address}</div>
               <div>
                 {
-                  stopsData?.find((stop) => stop.stopId === house.busStop)
+                  stopsData?.find((stop) => stop.id === house.busStopTableID)
                     ?.description
                 }
               </div>

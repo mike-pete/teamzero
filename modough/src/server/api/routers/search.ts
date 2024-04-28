@@ -33,7 +33,7 @@ export const searchRoute = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // get coordinates of inserted address
       const addressResult = await getAddress(input.address, ctx.db);
-      if (!addressResult) {
+      
         // compile request
         const params = new URLSearchParams();
         params.append("subscription-key", AZURE_ATLAS_TOKEN);
@@ -62,14 +62,15 @@ export const searchRoute = createTRPCRouter({
               return { ...cur, distance: curDistance };
             return acc;
           },
-          { id: 0, distance: Number.MAX_VALUE },
+          { id: 0, stopId:'', distance: Number.MAX_VALUE },
         );
 
-        return [
-          { longitude: curLng, latitude: curLat },
-          closest.distance < 0.03 ? closest : null,
-        ];
-      }
+        return {
+          address: input.address,
+          coordinates: { longitude: curLng, latitude: curLat },
+          nearestStop: closest.distance < 0.03 ? closest : null,
+        };
+      
     }),
   getAddress: publicProcedure
     .input(z.object({ address: z.string() }))
@@ -84,13 +85,14 @@ export const searchRoute = createTRPCRouter({
         latitude: true,
         longitude: true,
         id: true,
-        busStop: { select: { stopId: true } },
+        busStop: { select: { stopId: true, id:true } },
       },
     });
-
+    
     return addresses.map((address) => ({
       ...address,
       busStop: address.busStop.stopId,
+      busStopTableID: address.busStop.id, //yikes
     }));
   }),
   saveAddress: publicProcedure
