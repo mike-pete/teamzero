@@ -14,7 +14,8 @@ export const searchRoute = createTRPCRouter({
     .input(z.object({ address: z.string().min(1) }))
     .mutation(async ({ input }) => {
       return {
-        greeting: `Hello ${input.address}`,
+        address: input.address,
+        nearestStop: { id: 1, name: "Stop 1", location: { lat: 0, lng: 0 } },
       };
     }),
 });

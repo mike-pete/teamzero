@@ -1,4 +1,5 @@
 "use client";
+import { IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
@@ -19,22 +20,25 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="rounded-lg border-2 px-2 py-0.5"
-          placeholder="Address"
-        />
-        <button
-          type="submit"
-          className="rounded-lg border-2 bg-zinc-100 px-2 py-0.5"
-        >
-          Search
-        </button>
-      </form>
+    <div className="flex min-h-screen flex-col items-center gap-4 bg-zinc-50 p-8">
+      <div className="flex flex-col gap-2">
+        <p className="text-zinc-400 font-semibold text-lg">Find nearest bus stop for drop off</p>
+        <form onSubmit={handleSubmit} className="flex">
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="rounded-lg border-2 px-2 py-1 flex-grow rounded-r-none"
+            placeholder="Address"
+          />
+          <button
+            type="submit"
+            className="rounded-lg border-2 bg-zinc-100 px-2 rounded-l-none border-l-0"
+          >
+            <IconSearch size={20} className="text-black/45" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
