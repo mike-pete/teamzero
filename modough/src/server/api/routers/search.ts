@@ -1,16 +1,17 @@
 import { z } from "zod";
 
-import type { PrismaClient } from "@prisma/client/extension";
+import type { PrismaClient } from "@prisma/client";
 import { env } from "~/env";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import type { Addresses } from "@prisma/client";
 
 const AZURE_ATLAS_TOKEN = env.AZURE_ATLAS_TOKEN;
 
 const getAddress = async (address: string, prisma: PrismaClient) => {
-  const addressResult = await prisma.addresses.findFirst({
+  const addressResult = (await prisma.addresses.findFirst({
     where: { address: address },
-  });
+  }))!;
   return addressResult;
 };
 
@@ -58,7 +59,7 @@ export const searchRoute = createTRPCRouter({
 
         }, { id: 0, distance: Number.MAX_VALUE })
 
-        return closest
+        return [{longitude:curLng, latitude:curLat}, closest.distance < 0.03 ? closest : null]
 
       }
     }),
