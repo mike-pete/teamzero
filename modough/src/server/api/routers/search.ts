@@ -66,13 +66,6 @@ export const searchRoute = createTRPCRouter({
 
         return closest
 
-        //   addressResult = db.addresses.create({data:{
-        //     address: input.address,
-        //     longitude:  geometry.coordinates[0],
-        //     latitude:  geometry.coordinates[1],
-        //     busStopId: 
-        //   }})
-        // }
       }
     }),
   getAddress: publicProcedure
@@ -81,4 +74,22 @@ export const searchRoute = createTRPCRouter({
       // check db for address, null if not found
       return await getAddress(input.address, ctx.db);
     }),
+  saveAddress: publicProcedure
+    .input(z.object({
+      address: z.string(),
+      busStopId: z.number(),
+      latitude: z.number(),
+      longitude: z.number(),
+    }))
+    .mutation(({ input }) => {
+      const addressResult = db.addresses.create({
+        data: {
+          address: input.address,
+          longitude: input.longitude,
+          latitude: input.latitude,
+          busStopId: input.busStopId
+        }
+      })
+      return addressResult
+    })
 });
